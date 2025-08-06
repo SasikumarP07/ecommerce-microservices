@@ -1,7 +1,6 @@
 package com.ecommerce.order_service.service;
 
 import com.ecommerce.common_dto.dto.order.*;
-
 import java.util.List;
 
 /**
@@ -13,7 +12,7 @@ import java.util.List;
  * Each method returns a DTO to decouple the service layer from the persistence layer.
  *
  * @author YourName
- * @see com.ecommerce.order_service.serviceImplementation.OrderServiceImplementation
+ * @see com.ecommerce.order_service.serviceimplementation.OrderServiceImplementation
  * @see com.ecommerce.common_dto.dto.order.OrderRequestDTO
  * @see com.ecommerce.common_dto.dto.order.OrderResponseDTO
  */

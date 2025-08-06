@@ -2,9 +2,9 @@ package com.ecommerce.payment_service.integrationtest;
 
 import com.ecommerce.common_dto.dto.payment.PaymentRequestDTO;
 import com.ecommerce.common_dto.dto.payment.PaymentResponseDTO;
+import com.ecommerce.common_dto.enums.PaymentMethod;
+import com.ecommerce.common_dto.enums.PaymentStatus;
 import com.ecommerce.payment_service.controller.PaymentController;
-import com.ecommerce.payment_service.enums.PaymentMethod;
-import com.ecommerce.payment_service.enums.PaymentStatus;
 import com.ecommerce.payment_service.service.PaymentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

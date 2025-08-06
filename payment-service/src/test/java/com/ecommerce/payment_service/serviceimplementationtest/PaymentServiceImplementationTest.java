@@ -2,9 +2,9 @@ package com.ecommerce.payment_service.serviceimplementationtest;
 
 import com.ecommerce.common_dto.dto.payment.PaymentRequestDTO;
 import com.ecommerce.common_dto.dto.payment.PaymentResponseDTO;
+import com.ecommerce.common_dto.enums.PaymentMethod;
+import com.ecommerce.common_dto.enums.PaymentStatus;
 import com.ecommerce.payment_service.entity.Payment;
-import com.ecommerce.payment_service.enums.PaymentMethod;
-import com.ecommerce.payment_service.enums.PaymentStatus;
 import com.ecommerce.payment_service.mapper.PaymentMapper;
 import com.ecommerce.payment_service.repository.PaymentRepository;
 import com.ecommerce.payment_service.serviceimplementation.PaymentServiceImplementation;
