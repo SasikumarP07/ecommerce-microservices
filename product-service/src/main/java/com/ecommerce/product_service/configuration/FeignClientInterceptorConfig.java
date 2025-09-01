@@ -36,13 +36,13 @@ public class FeignClientInterceptorConfig {
                 String token = request.getHeader("Authorization");
 
                 if (token != null) {
-                    log.debug("🔐 Forwarding Authorization token to Feign client");
+                    log.debug("Forwarding Authorization token to Feign client");
                     requestTemplate.header("Authorization", token);
                 } else {
-                    log.warn("⚠️ Authorization token not found in the request header");
+                    log.warn("Authorization token not found in the request header");
                 }
             } else {
-                log.warn("⚠️ Request attributes are null. Cannot propagate token.");
+                log.warn("Request attributes are null. Cannot propagate token.");
             }
         };
     }

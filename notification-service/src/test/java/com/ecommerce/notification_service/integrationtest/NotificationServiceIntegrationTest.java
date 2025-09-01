@@ -43,13 +43,11 @@ class NotificationServiceIntegrationTest {
      */
     @Test
     void sendNotification_shouldSaveAndReturnNotification() throws Exception {
-        // Given
         NotificationRequestDTO requestDTO = new NotificationRequestDTO();
         requestDTO.setToEmail("test@example.com");
         requestDTO.setSubject("Integration Test");
         requestDTO.setMessage("This is a test notification");
 
-        // When & Then
         mockMvc.perform(post("/api/notifications")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * 🗃️ Inventory Entity
+ * Inventory Entity
  * <p>
  * Represents the inventory record for a specific product in the database.
  * Each product has a one-to-one mapping with its inventory.
@@ -16,7 +16,7 @@ import lombok.*;
  * - quantity: Available stock for the product
  * </p>
  *
- * ✅ Uses Lombok annotations for boilerplate code generation:
+ *  Uses Lombok annotations for boilerplate code generation:
  * - {@code @Data} for getters, setters, equals, hashCode, and toString
  * - {@code @Builder} for fluent object creation
  * - {@code @NoArgsConstructor}, {@code @AllArgsConstructor} for constructors

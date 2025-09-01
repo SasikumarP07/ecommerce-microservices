@@ -41,20 +41,20 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String email) {
-        log.info("🔐 Attempting to load user by email: {}", email);
+        log.info("Attempting to load user by email: {}", email);
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
-                    log.warn("❌ User not found for email: {}", email);
+                    log.warn("User not found for email: {}", email);
                     return new UsernameNotFoundException("User not found");
                 });
 
-        log.info("✅ User found with ID: {}, Role: {}", user.getId(), user.getRole());
+        log.info("User found with ID: {}, Role: {}", user.getId(), user.getRole());
 
         return new org.springframework.security.core.userdetails.User(
-                String.valueOf(user.getId()), // Username is user ID as string
-                user.getPassword(),           // Encrypted password
-                List.of(new SimpleGrantedAuthority(user.getRole())) // Role-based authority
+                String.valueOf(user.getId()),
+                user.getPassword(),
+                List.of(new SimpleGrantedAuthority(user.getRole()))
         );
     }
 }

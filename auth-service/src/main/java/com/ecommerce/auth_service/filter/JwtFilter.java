@@ -53,12 +53,12 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         String requestPath = request.getServletPath();
 
-        log.debug("🔍 Intercepted request to path: {}", requestPath);
-        log.debug("🔐 Authorization Header: {}", authHeader);
+        log.debug("Intercepted request to path: {}", requestPath);
+        log.debug("Authorization Header: {}", authHeader);
 
         // Skip filtering for public endpoints
         if (requestPath.startsWith("/auth/signup") || requestPath.startsWith("/auth/login")) {
-            log.info("➡️ Skipping JWT filter for public endpoint: {}", requestPath);
+            log.info("Skipping JWT filter for public endpoint: {}", requestPath);
             filterChain.doFilter(request, response);
             return;
         }
@@ -71,9 +71,9 @@ public class JwtFilter extends OncePerRequestFilter {
             jwtToken = authHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwtToken);
-                log.info("✅ Extracted username from JWT: {}", username);
+                log.info("Extracted username from JWT: {}", username);
             } catch (Exception e) {
-                log.error("❌ Failed to extract username from JWT: {}", e.getMessage(), e);
+                log.error("Failed to extract username from JWT: {}", e.getMessage(), e);
             }
         }
 
@@ -81,11 +81,11 @@ public class JwtFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (jwtUtil.validateToken(jwtToken)) {
-                log.info("🔐 JWT token is valid for user: {}", username);
+                log.info("JWT token is valid for user: {}", username);
 
                 // Extract role from token and set it in authorities
                 String role = jwtUtil.extractClaim(jwtToken, claims -> claims.get("role", String.class));
-                log.debug("🔓 Extracted role from JWT: {}", role);
+                log.debug("Extracted role from JWT: {}", role);
 
                 List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
@@ -96,9 +96,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 // Set security context
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-                log.info("✅ Security context updated with authenticated user: {}", username);
+                log.info("Security context updated with authenticated user: {}", username);
             } else {
-                log.warn("❌ JWT token is invalid for user: {}", username);
+                log.warn("JWT token is invalid for user: {}", username);
             }
         }
 
@@ -117,7 +117,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        log.debug("🚦 shouldNotFilter evaluated for path: {}", path);
+        log.debug("shouldNotFilter evaluated for path: {}", path);
         return path.equals("/auth/login") || path.equals("/auth/signup");
     }
 }

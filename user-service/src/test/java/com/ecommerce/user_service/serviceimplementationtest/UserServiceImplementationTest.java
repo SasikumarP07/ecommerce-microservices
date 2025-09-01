@@ -134,7 +134,7 @@ class UserServiceImplementationTest {
         AddressResponseDTO response = userService.addAddress(1L, addressRequestDTO);
 
         assertNotNull(response);
-        assertEquals("Old Street", response.getStreet()); // adjust depending on mapper behavior
+        assertEquals("Old Street", response.getStreet());
     }
 
     /**
@@ -149,7 +149,7 @@ class UserServiceImplementationTest {
         AddressResponseDTO response = userService.updateAddress(1L, 100L, addressRequestDTO);
 
         assertNotNull(response);
-        assertEquals("New Street", response.getStreet()); // check updated value
+        assertEquals("New Street", response.getStreet());
     }
 
     /**

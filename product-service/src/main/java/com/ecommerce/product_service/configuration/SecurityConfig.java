@@ -12,7 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * 🔐 SecurityConfig sets up security configurations for the Product Service.
+ * SecurityConfig sets up security configurations for the Product Service.
  * It uses a stateless session policy, applies role-based access control, and integrates JWT-based authentication.
  */
 @Configuration
@@ -47,7 +47,7 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("🔒 Configuring security filter chain...");
+        log.info("Configuring security filter chain...");
 
         http
                 .csrf(csrf -> {
@@ -59,37 +59,31 @@ public class SecurityConfig {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
                 .authorizeHttpRequests(auth -> {
-                    log.debug("🔓 Permitting Swagger UI and API docs access");
+                    log.debug("Permitting public access to product and category listings");
                     auth
                             .requestMatchers(
-                                    "/v3/api-docs/**",
-                                    "/swagger-ui/**",
-                                    "/swagger-ui.html",
-                                    "/webjars/**"
+                                    "/products/latest",
+                                    "/products/suggested/**",
+                                    "/products",
+                                    "/products/{id}",
+                                    "/products/filter",
+                                    "/categories",
+                                    "/categories/{id}"
                             ).permitAll();
 
-                    log.debug("🌐 Permitting public access to product and category listings");
-                    auth
-                            .requestMatchers(
-                                    "/products/latest", "/products/suggested/**", "/products",
-                                    "/products/{id}", "/products/filter",
-                                    "/categories", "/categories/{id}"
-                            ).permitAll();
-
-                    log.debug("🔐 Restricting ADMIN-only access to product and category management");
+                    log.debug("Restricting ADMIN-only access to product and category management");
                     auth
                             .requestMatchers("/products/**").hasRole("ADMIN")
                             .requestMatchers("/categories/**").hasRole("ADMIN");
 
-                    log.debug("🔐 All other endpoints require authentication");
+                    log.debug("All other endpoints require authentication");
                     auth.anyRequest().authenticated();
                 })
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        log.info("✅ Security filter chain configured");
+        log.info("Security filter chain configured successfully");
         return http.build();
     }
-
 
     /**
      * Provides the AuthenticationManager bean, required for Spring Security authentication.
@@ -100,7 +94,7 @@ public class SecurityConfig {
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        log.info("🔑 Creating AuthenticationManager bean");
+        log.info("Creating AuthenticationManager bean");
         return config.getAuthenticationManager();
     }
 }

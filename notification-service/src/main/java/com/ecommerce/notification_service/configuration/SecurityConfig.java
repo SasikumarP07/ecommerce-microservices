@@ -19,17 +19,17 @@ import org.springframework.web.cors.*;
 import java.util.List;
 
 /**
- * 🔐 Security configuration class for the Notification Service.
+ * Security configuration class for the Notification Service.
  * Sets up JWT-based authentication, disables CSRF, configures CORS,
  * and allows specific public endpoints.
  */
 @Configuration
-@EnableMethodSecurity // Enables method-level security annotations like @PreAuthorize
+@EnableMethodSecurity
 @Slf4j
 public class SecurityConfig {
 
     @Autowired
-    private JwtFilter jwtFilter; // Custom JWT filter for token validation
+    private JwtFilter jwtFilter;
 
     /**
      * Configures the Spring Security filter chain.
@@ -40,27 +40,27 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("🔐 Configuring SecurityFilterChain for Notification Service");
+        log.info("Configuring SecurityFilterChain for Notification Service");
 
         return http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF protection (for stateless APIs)
-                .headers(headers -> headers.frameOptions(frame -> frame.disable())) // Allow H2 console in iframe
-                .cors(Customizer.withDefaults()) // Enable CORS using custom configuration
+                .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/public/**",
                                 "/h2-console/**",
-                                "/actuator/**",
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html"
-                        ).permitAll() // Public and Swagger access
-                        .requestMatchers("/api/notifications/**").hasRole("USER") // Protected access
-                        .anyRequest().authenticated() // Any other requests need authentication
+                                "/actuator/**"
+                        ).permitAll() // Public access
+
+                        .requestMatchers("/api/notifications/**").hasAnyRole("USER", "ADMIN")
+
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // JWT filter
                 .build();
     }
+
 
 
     /**
@@ -68,7 +68,7 @@ public class SecurityConfig {
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        log.info("🔐 Initializing AuthenticationManager");
+        log.info("Initializing AuthenticationManager");
         return config.getAuthenticationManager();
     }
 
@@ -78,7 +78,7 @@ public class SecurityConfig {
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        log.info("🔐 Creating BCryptPasswordEncoder bean");
+        log.info("Creating BCryptPasswordEncoder bean");
         return new BCryptPasswordEncoder();
     }
 
@@ -89,16 +89,16 @@ public class SecurityConfig {
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        log.info("🌐 Configuring CORS settings");
+        log.info("Configuring CORS settings");
 
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*")); // Allow all origins (not recommended for production)
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // HTTP methods allowed
-        config.setAllowedHeaders(List.of("*")); // Allow all headers
-        config.setAllowCredentials(true); // Allow cookies/token headers
+        config.setAllowedOrigins(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config); // Apply CORS config to all endpoints
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
 }

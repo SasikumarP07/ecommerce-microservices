@@ -8,14 +8,21 @@ import com.ecommerce.auth_service.service.AuthService;
 import com.ecommerce.common_dto.dto.auth.LoginRequest;
 import com.ecommerce.common_dto.dto.auth.SignUpRequest;
 import com.ecommerce.common_dto.dto.notification.NotificationRequestDTO;
+import com.ecommerce.common_dto.dto.user.AddressRequest;
 import com.ecommerce.common_dto.dto.user.UserProfileRequest;
 import com.ecommerce.common_util.util.JwtUtil;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementation of the AuthService interface.
@@ -43,43 +50,69 @@ public class AuthServiceImplementation implements AuthService {
      */
     @Override
     public String register(SignUpRequest request) {
-        log.info("📝 Registering new user with email: {}", request.getEmail());
+        log.info("Registering new user with email: {}", request.getEmail());
 
-        // Save AuthUser
+        String role = (request.getRole() != null && !request.getRole().isBlank())
+                ? request.getRole()
+                : "ROLE_USER";
+
         AuthUser user = new AuthUser();
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole("ROLE_USER");
+        user.setRole(role);
 
         AuthUser savedUser = authUserRepository.save(user);
-        log.info("✅ AuthUser saved with ID: {}", savedUser.getId());
+        log.info("AuthUser saved with ID: {}", savedUser.getId());
 
-        // Create User Profile via Feign
         UserProfileRequest profile = new UserProfileRequest();
         profile.setId(savedUser.getId());
         profile.setName(request.getName());
         profile.setPhone(request.getPhone());
-        profile.setAddress(request.getAddress());
         profile.setEmail(savedUser.getEmail());
         profile.setPassword(savedUser.getPassword());
         profile.setRole(savedUser.getRole());
 
+        List<AddressRequest> addressList = new ArrayList<>();
+        AddressRequest address = new AddressRequest();
+        List<AddressRequest> addressRequestList=request.getAddresses();
+        for(AddressRequest ar:addressRequestList){
+            address.setDoorNum(ar.getDoorNum());
+            address.setStreet(ar.getStreet());
+            address.setCity(ar.getCity());
+            address.setState(ar.getState());
+            address.setPinCode(ar.getPinCode());
+            address.setCountry(ar.getCountry());
+            addressList.add(address);
+        }
+
+        profile.setAddresses(addressList);
+
         String token = jwtUtil.generateToken(savedUser.getId(), savedUser.getRole());
-        log.info("🔐 JWT token generated for user ID: {}", savedUser.getId());
+        log.info("JWT token generated for user ID: {}", savedUser.getId());
 
-        userClient.createUser(profile, "Bearer " + token);
-        log.info("📨 User profile sent to User Service via Feign Client");
+        createUserProfileSafe(profile, "Bearer " + token);
+        log.info("User profile sent to User Service via Feign Client");
 
-        // Send Welcome Notification
         NotificationRequestDTO notification = new NotificationRequestDTO();
         notification.setToEmail(savedUser.getEmail());
         notification.setSubject("Welcome to E-Commerce App");
-        notification.setMessage("Hi " + request.getName() + ",\n\nThanks for registering!");
+        notification.setMessage("Hi " + request.getName() + ",\n\nThanks for registering as " + savedUser.getRole() + "!");
 
         notificationClient.sendNotification(notification);
-        log.info("📧 Welcome notification sent to email: {}", savedUser.getEmail());
+        log.info("Welcome notification sent to email: {}", savedUser.getEmail());
 
         return token;
+    }
+
+    @CircuitBreaker(name = "userServiceCB", fallbackMethod = "createUserFallback")
+    @Retry(name = "userServiceRetry")
+    public ResponseEntity<String> createUserProfileSafe(UserProfileRequest profile, String token) {
+        return userClient.createUser(profile, token);
+    }
+
+    public ResponseEntity<String> createUserFallback(UserProfileRequest profile, String token, Throwable ex) {
+        log.error("UserService unavailable, fallback triggered. Reason: {}", ex.getMessage());
+        return ResponseEntity.ok("User profile could not be created at the moment. Please try later.");
     }
 
     /**
@@ -91,7 +124,7 @@ public class AuthServiceImplementation implements AuthService {
     @Override
     public boolean existByEmail(String email) {
         boolean exists = authUserRepository.existsByEmail(email);
-        log.debug("🔍 Checking if email exists ({}): {}", email, exists);
+        log.debug("Checking if email exists ({}): {}", email, exists);
         return exists;
     }
 
@@ -103,20 +136,20 @@ public class AuthServiceImplementation implements AuthService {
      */
     @Override
     public String login(LoginRequest loginRequest) {
-        log.info("🔑 Login attempt for email: {}", loginRequest.getEmail());
+        log.info("Login attempt for email: {}", loginRequest.getEmail());
 
         AuthUser user = authUserRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> {
-                    log.warn("❌ User not found for email: {}", loginRequest.getEmail());
+                    log.warn("User not found for email: {}", loginRequest.getEmail());
                     return new UsernameNotFoundException("User not found");
                 });
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            log.warn("❌ Invalid credentials for email: {}", loginRequest.getEmail());
+            log.warn("Invalid credentials for email: {}", loginRequest.getEmail());
             throw new BadCredentialsException("Invalid credentials");
         }
 
-        log.info("✅ Login successful for user ID: {}", user.getId());
+        log.info("Login successful for user ID: {}", user.getId());
         return jwtUtil.generateToken(user.getId(), user.getRole());
     }
 }

@@ -16,5 +16,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @see org.springframework.data.jpa.repository.JpaRepository
  */
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
-    // You can define custom query methods here if needed
 }

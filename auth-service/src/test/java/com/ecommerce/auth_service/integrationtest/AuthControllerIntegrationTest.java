@@ -3,6 +3,7 @@ package com.ecommerce.auth_service.integrationtest;
 import com.ecommerce.auth_service.serviceImplementation.AuthServiceImplementation;
 import com.ecommerce.common_dto.dto.auth.LoginRequest;
 import com.ecommerce.common_dto.dto.auth.SignUpRequest;
+import com.ecommerce.common_dto.dto.user.AddressRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,6 +16,10 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,8 +46,6 @@ class AuthControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // ---------- SIGNUP TESTS ----------
-
     /**
      * Test the successful signup flow.
      * Verifies that a valid signup request returns a 200 OK with a JWT token.
@@ -50,7 +53,7 @@ class AuthControllerIntegrationTest {
 
     @Test
     void testSignup_Success() throws Exception {
-        SignUpRequest request = new SignUpRequest("test@example.com", "pass123", "John", "9999999999", "NYC");
+        SignUpRequest request = new SignUpRequest("test2@example.com", "pass123", "Rick", "7777777777", List.of(new AddressRequest(138L,"west Street","chennai","TN","123456","India")),"ROLE_USER");
 
         Mockito.when(authService.existByEmail("test@example.com")).thenReturn(false);
         Mockito.when(authService.register(any(SignUpRequest.class))).thenReturn("jwt-token");
@@ -69,7 +72,7 @@ class AuthControllerIntegrationTest {
 
     @Test
     void testSignup_EmailAlreadyExists() throws Exception {
-        SignUpRequest request = new SignUpRequest("existing@example.com", "pass123", "Jane", "8888888888", "LA");
+        SignUpRequest request = new SignUpRequest("test2@example.com", "pass123", "Rick", "7777777777", List.of(new AddressRequest(138L,"west Street","chennai","TN","123456","India")),"ROLE_USER");
 
         Mockito.when(authService.existByEmail("existing@example.com")).thenReturn(true);
 
@@ -87,7 +90,7 @@ class AuthControllerIntegrationTest {
 
     @Test
     void testSignup_InternalServerError() throws Exception {
-        SignUpRequest request = new SignUpRequest("test2@example.com", "pass123", "Rick", "7777777777", "CA");
+        SignUpRequest request = new SignUpRequest("test2@example.com", "pass123", "Rick", "7777777777", List.of(new AddressRequest(138L,"west Street","chennai","TN","123456","India")),"ROLE_USER");
 
         Mockito.when(authService.existByEmail("test2@example.com")).thenReturn(false);
         Mockito.when(authService.register(any(SignUpRequest.class))).thenThrow(new RuntimeException("DB error"));
@@ -98,8 +101,6 @@ class AuthControllerIntegrationTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string(containsString("Signup failed")));
     }
-
-    // ---------- LOGIN TESTS ----------
 
     /**
      * Test the successful login flow.

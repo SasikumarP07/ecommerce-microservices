@@ -79,7 +79,6 @@ public class OrderServiceImplementation implements OrderService {
 
         log.info("Order placed successfully with ID: {}", savedOrder.getId());
 
-        // Fetch user and send notification
         UserResponseDTO user = userClient.getUserById(requestDTO.getUserId());
 
         NotificationRequestDTO notification = new NotificationRequestDTO();

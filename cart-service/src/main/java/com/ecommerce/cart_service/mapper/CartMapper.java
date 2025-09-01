@@ -31,7 +31,7 @@ public class CartMapper {
      */
     public static CartResponseDTO toResponseDTO(Cart cart, ProductAsyncService asyncService) {
         if (cart == null || cart.getItems() == null) {
-            log.warn("🛑 Cannot map null cart or items in async method.");
+            log.warn("Cannot map null cart or items in async method.");
             return null;
         }
 
@@ -45,7 +45,7 @@ public class CartMapper {
                 .collect(Collectors.toList());
 
         CartResponseDTO response = new CartResponseDTO(cart.getId(), cart.getUserId(), itemDTOs,cart.getTotalPrice());
-        log.debug("✅ Async CartResponseDTO created: {}", response);
+        log.debug("Async CartResponseDTO created: {}", response);
         return response;
     }
 
@@ -58,7 +58,7 @@ public class CartMapper {
      */
     public static CartResponseDTO toResponseDTO(Cart cart, ProductServiceClient productClient) {
         if (cart == null || cart.getItems() == null) {
-            log.warn("🛑 Cannot map null cart or items in sync method.");
+            log.warn("Cannot map null cart or items in sync method.");
             return null;
         }
 
@@ -70,7 +70,7 @@ public class CartMapper {
                 .collect(Collectors.toList());
 
         CartResponseDTO response = new CartResponseDTO(cart.getId(), cart.getUserId(), itemDTOs,cart.getTotalPrice());
-        log.debug("✅ Sync CartResponseDTO created: {}", response);
+        log.debug("Sync CartResponseDTO created: {}", response);
         return response;
     }
 
@@ -83,7 +83,7 @@ public class CartMapper {
      */
     private static CartItemResponseDTO mapToCartItemResponse(CartItem item, ProductResponseDTO product) {
         if (item == null || product == null) {
-            log.error("🚨 Cannot map CartItemResponseDTO: item or product is null.");
+            log.error("Cannot map CartItemResponseDTO: item or product is null.");
             return null;
         }
 

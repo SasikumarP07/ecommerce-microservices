@@ -12,10 +12,10 @@ import com.ecommerce.common_dto.dto.notification.*;
 public interface NotificationService {
 
     /**
-     * Sends a notification to the specified recipient.
+     * Sends a notification: saves to DB and sends email asynchronously.
      *
-     * @param requestDTO the request object containing recipient email, subject, and message
-     * @return a response object containing notification status and details
+     * @param requestDTO the request object containing email, subject, and message
+     * @return response DTO with saved notification info
      */
     NotificationResponseDTO sendNotification(NotificationRequestDTO requestDTO);
 }

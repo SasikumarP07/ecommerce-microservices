@@ -46,10 +46,10 @@ public class ProductServiceImplementation implements ProductService {
     @Override
     @Transactional
     public ProductResponseDTO createProduct(ProductRequestDTO dto) {
-        log.info("🔄 Creating new product with name: {}", dto.getName());
+        log.info("Creating new product with name: {}", dto.getName());
 
         Product saved = productRepository.save(ProductMapper.dtoToEntity(dto));
-        log.info("✅ Product saved with ID: {}", saved.getId());
+        log.info("Product saved with ID: {}", saved.getId());
 
         InventoryRequestDTO inventoryRequest = InventoryRequestDTO.builder()
                 .productId(saved.getId())
@@ -58,9 +58,9 @@ public class ProductServiceImplementation implements ProductService {
 
         try {
             inventoryClient.createInventory(inventoryRequest);
-            log.info("📦 Inventory initialized for product ID: {}", saved.getId());
+            log.info("Inventory initialized for product ID: {}", saved.getId());
         } catch (Exception e) {
-            log.error("❌ Failed to create inventory for product ID: {}", saved.getId(), e);
+            log.error("Failed to create inventory for product ID: {}", saved.getId(), e);
         }
 
         return ProductMapper.entityToDto(saved);
@@ -77,7 +77,7 @@ public class ProductServiceImplementation implements ProductService {
     public ProductResponseDTO getProductById(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> {
-                    log.warn("⚠️ Product not found with ID: {}", productId);
+                    log.warn("Product not found with ID: {}", productId);
                     return new ResourceNotFoundException("Product not found with id: " + productId);
                 });
         return ProductMapper.entityToDto(product);
@@ -106,11 +106,11 @@ public class ProductServiceImplementation implements ProductService {
     @Override
     public void deleteProduct(Long productId) {
         if (!productRepository.existsById(productId)) {
-            log.warn("⚠️ Tried to delete non-existing product with ID: {}", productId);
+            log.warn("Tried to delete non-existing product with ID: {}", productId);
             throw new ResourceNotFoundException("Product not found with id: " + productId);
         }
         productRepository.deleteById(productId);
-        log.info("🗑️ Product deleted with ID: {}", productId);
+        log.info("Product deleted with ID: {}", productId);
     }
 
     /**
@@ -229,7 +229,7 @@ public class ProductServiceImplementation implements ProductService {
         existing.getImageUrls().addAll(images);
 
         Product updated = productRepository.save(existing);
-        log.info("✅ Product updated with ID: {}", updated.getId());
+        log.info("Product updated with ID: {}", updated.getId());
         return ProductMapper.entityToDto(updated);
     }
 }

@@ -35,12 +35,12 @@ public class FeignClientInterceptor implements RequestInterceptor {
 
             if (authHeader != null) {
                 template.header("Authorization", authHeader);
-                log.info("🔐 Forwarding Authorization header: {}", authHeader);
+                log.info("Forwarding Authorization header: {}", authHeader);
             } else {
-                log.warn("⚠️ No Authorization header found in the current request");
+                log.warn("No Authorization header found in the current request");
             }
         } else {
-            log.warn("⚠️ ServletRequestAttributes is null; Feign client request may not be within HTTP context");
+            log.warn("ServletRequestAttributes is null; Feign client request may not be within HTTP context");
         }
     }
 }

@@ -29,16 +29,14 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("🔍 Attempting to load user by username: {}", username);
+        log.info("Attempting to load user by username: {}", username);
 
-        // This is a dummy user for testing or fallback scenarios.
-        // In production, this should fetch user details from a database or external service.
         UserDetails user = User.withUsername(username)
-                .password("password") // ⚠️ Hardcoded password — replace with actual encoded password in real use
+                .password("password")
                 .authorities("ROLE_USER")
                 .build();
 
-        log.info("✅ Dummy user loaded with username: {}", username);
+        log.info("Dummy user loaded with username: {}", username);
         return user;
     }
 }

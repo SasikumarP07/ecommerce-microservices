@@ -18,6 +18,6 @@ public interface NotificationClient {
      *
      * @param toEmail The email address of the recipient.
      */
-    @PostMapping("/api/notification/send-welcome")
+    @PostMapping("/api/notifications/send-welcome")
     void sendWelcomeEmail(@RequestParam("toEmail") String toEmail);
 }

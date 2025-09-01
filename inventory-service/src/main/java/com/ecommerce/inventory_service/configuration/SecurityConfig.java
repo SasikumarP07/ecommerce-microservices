@@ -21,7 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 /**
- * 🔐 Security configuration class for the Inventory Service.
+ * Security configuration class for the Inventory Service.
  * <p>
  * This class defines security rules using Spring Security, such as:
  * - Configuring JWT-based authentication
@@ -52,30 +52,17 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("🔐 Configuring security filter chain for Inventory Service...");
+        log.info("Configuring security filter chain for Inventory Service...");
 
         return http
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        // ✅ Allow access to Swagger UI and H2 console
-                        .requestMatchers(
-                                "/h2-console/**",
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/swagger-resources/**",
-                                "/webjars/**"
-                        ).permitAll()
-
-                        // ✅ Secure inventory endpoints (role-based protection)
+                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/inventory/**").hasRole("ADMIN")
-
-                        // ✅ Any other endpoints must be authenticated
                         .anyRequest().authenticated()
                 )
-                // ✅ Add JWT filter
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -87,7 +74,7 @@ public class SecurityConfig {
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        log.info("🔑 Creating BCryptPasswordEncoder bean");
+        log.info("Creating BCryptPasswordEncoder bean");
         return new BCryptPasswordEncoder();
     }
 
@@ -101,7 +88,7 @@ public class SecurityConfig {
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        log.info("⚙️ Creating AuthenticationManager bean");
+        log.info("Creating AuthenticationManager bean");
         return config.getAuthenticationManager();
     }
 
@@ -114,7 +101,7 @@ public class SecurityConfig {
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        log.info("🌐 Configuring CORS");
+        log.info("Configuring CORS");
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("*")); // In production, restrict this
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

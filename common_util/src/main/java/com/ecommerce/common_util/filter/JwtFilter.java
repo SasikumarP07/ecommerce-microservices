@@ -20,11 +20,9 @@ import java.util.List;
 
 /**
  * JwtFilter is a custom Spring Security filter that validates JWT tokens on each request.
- * <p>
- * This filter checks the Authorization header for a Bearer token, validates the token,
- * extracts the username and role, and sets the authentication in the SecurityContextHolder.
- * <p>
- * It runs once per request using Spring's {@link OncePerRequestFilter}.
+ *
+ * It checks the Authorization header for a Bearer token, validates it,
+ * extracts the username & role, and sets authentication in the SecurityContext.
  */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -34,15 +32,6 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtil;
 
-    /**
-     * Intercepts each HTTP request to validate the JWT token from the Authorization header.
-     *
-     * @param request     the incoming HTTP request
-     * @param response    the outgoing HTTP response
-     * @param filterChain the filter chain to pass the request and response to the next filter
-     * @throws ServletException if an error occurs during filtering
-     * @throws IOException      if an input or output exception occurs
-     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -62,7 +51,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
                     logger.info("Valid JWT token. User: {}, Role: {}", email, role);
 
-                    List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+                    String finalRole = role.startsWith("ROLE_") ? role : "ROLE_" + role;
+
+                    List<GrantedAuthority> authorities =
+                            List.of(new SimpleGrantedAuthority(finalRole));
+
+                    logger.info("Authorities set for {}: {}", email, authorities);
 
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(email, null, authorities);
@@ -73,7 +67,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     logger.warn("Invalid JWT token received");
                 }
             } catch (Exception e) {
-                logger.error("Exception during JWT processing: {}", e.getMessage());
+                logger.error("Exception during JWT processing", e);
             }
 
         } else {

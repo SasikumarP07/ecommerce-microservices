@@ -1,21 +1,21 @@
-# 🛡️ API Gateway - E-commerce Microservices Project
+# API Gateway - E-commerce Microservices Project
 
 This is the **API Gateway** component of the E-commerce Microservices Application. It is built using **Spring Cloud Gateway** and acts as a single entry point for routing requests to downstream services like Auth, Product, Order, Cart, etc.
 
 ---
 
-## 📦 Features
+## Features
 
-- ✅ Route requests to different microservices
-- ✅ Apply security filters (JWT authentication & validation)
-- ✅ Centralized request logging
-- ✅ Custom error handling (optional)
-- ✅ Load balancing with Eureka
-- ✅ Configurable routes
+- Route requests to different microservices
+- Apply security filters (JWT authentication & validation)
+- Centralized request logging
+- Custom error handling (optional)
+- Load balancing with Eureka
+- Configurable routes
 
 ---
 
-## 🧱 Technologies Used
+## Technologies Used
 
 - Java 17
 - Spring Boot
@@ -28,7 +28,7 @@ This is the **API Gateway** component of the E-commerce Microservices Applicatio
 
 ---
 
-## 🔐 JWT Authentication Flow
+## JWT Authentication Flow
 
 1. Client sends a request with JWT token in `Authorization` header.
 2. Gateway intercepts it using `JwtValidationFilter`.
@@ -38,6 +38,6 @@ This is the **API Gateway** component of the E-commerce Microservices Applicatio
 
 ---
 
-## 🧪 Test Endpoints
+## Test Endpoints
 
 To test from Postman or Web browser:

@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
 /**
- * ✅ Test configuration class used to define custom test-specific beans.
+ * Test configuration class used to define custom test-specific beans.
  * This class provides a mocked version of {@link AuthServiceImplementation}
  * for use in integration tests, allowing you to isolate the controller layer
  * from actual service logic.
@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Bean;
 class MockConfig {
 
     /**
-     * ✅ Provides a Mockito mock of {@link AuthServiceImplementation} as a Spring bean.
+     * Provides a Mockito mock of {@link AuthServiceImplementation} as a Spring bean.
      * This mock will be injected into the application context during tests,
      * enabling controller-level testing without invoking real service logic.
      *

@@ -23,7 +23,7 @@ public class ProductMapper {
      * @return a Product entity populated from the DTO
      */
     public static Product dtoToEntity(ProductRequestDTO dto) {
-        log.info("🔄 Mapping ProductRequestDTO to Product entity: {}", dto);
+        log.info("Mapping ProductRequestDTO to Product entity: {}", dto);
 
         Product product = new Product();
         product.setName(dto.getName());
@@ -36,7 +36,7 @@ public class ProductMapper {
         Category category = new Category();
         category.setId(dto.getCategoryId());
         product.setCategory(category);
-        log.debug("📦 Mapped category with ID: {}", dto.getCategoryId());
+        log.debug("Mapped category with ID: {}", dto.getCategoryId());
 
         // Map image URLs to ProductImage entities
         List<ProductImage> images = dto.getImageUrls().stream()
@@ -49,7 +49,7 @@ public class ProductMapper {
                 .collect(Collectors.toList());
 
         product.setImageUrls(images);
-        log.debug("🖼️ Mapped {} image URLs to ProductImage list", images.size());
+        log.debug("Mapped {} image URLs to ProductImage list", images.size());
 
         return product;
     }
@@ -61,7 +61,7 @@ public class ProductMapper {
      * @return a ProductResponseDTO populated from the entity
      */
     public static ProductResponseDTO entityToDto(Product product) {
-        log.info("🔁 Mapping Product entity to ProductResponseDTO: Product ID {}", product.getId());
+        log.info("Mapping Product entity to ProductResponseDTO: Product ID {}", product.getId());
 
         ProductResponseDTO dto = new ProductResponseDTO();
         dto.setId(product.getId());
@@ -75,7 +75,7 @@ public class ProductMapper {
         if (product.getCategory() != null) {
             dto.setCategoryId(product.getCategory().getId());
             dto.setCategoryName(product.getCategory().getName());
-            log.debug("📂 Set category info: ID={}, Name={}", product.getCategory().getId(), product.getCategory().getName());
+            log.debug("Set category info: ID={}, Name={}", product.getCategory().getId(), product.getCategory().getName());
         }
 
         // Convert ProductImage entities to list of URLs
@@ -87,7 +87,7 @@ public class ProductMapper {
         dto.setCreatedAt(product.getCreatedAt());
         dto.setUpdatedAt(product.getUpdatedAt());
 
-        log.debug("🧾 Mapped {} images and timestamps", imageUrls.size());
+        log.debug("Mapped {} images and timestamps", imageUrls.size());
 
         return dto;
     }

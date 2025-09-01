@@ -53,17 +53,14 @@ class NotificationServiceImplementationTest {
      */
     @Test
     void sendNotification_shouldReturnResponseDTO() {
-        // Given
         NotificationRequestDTO requestDTO = new NotificationRequestDTO();
         requestDTO.setToEmail("user@example.com");
         requestDTO.setSubject("Test Subject");
         requestDTO.setMessage("Test Message");
 
-        // Simulate entity creation and assign ID
         Notification notificationEntity = NotificationMapper.toEntity(requestDTO);
         notificationEntity.setId(1L);
 
-        // Simulated return object after saving to DB
         Notification savedNotification = new Notification();
         savedNotification.setId(1L);
         savedNotification.setToEmail("user@example.com");
@@ -72,17 +69,14 @@ class NotificationServiceImplementationTest {
 
         when(notificationRepository.save(any(Notification.class))).thenReturn(savedNotification);
 
-        // When
         NotificationResponseDTO responseDTO = notificationService.sendNotification(requestDTO);
 
-        // Then
         assertNotNull(responseDTO, "Response should not be null");
         assertEquals(1L, responseDTO.getId());
         assertEquals("user@example.com", responseDTO.getToEmail());
         assertEquals("Test Subject", responseDTO.getSubject());
         assertEquals("Test Message", responseDTO.getMessage());
 
-        // Ensure repository save method is called once
         verify(notificationRepository, times(1)).save(any(Notification.class));
     }
 }

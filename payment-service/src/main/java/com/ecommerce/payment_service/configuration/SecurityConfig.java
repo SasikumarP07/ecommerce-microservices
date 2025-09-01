@@ -45,50 +45,37 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("💳 Configuring SecurityFilterChain for Payment Service...");
+        log.info("Configuring SecurityFilterChain for Payment Service...");
 
         SecurityFilterChain chain = http
                 .csrf(csrf -> {
                     csrf.disable();
-                    log.debug("✅ CSRF disabled");
+                    log.debug("CSRF disabled");
                 })
                 .headers(headers -> {
                     headers.frameOptions(frame -> frame.disable());
-                    log.debug("✅ Frame options disabled (for H2 console)");
+                    log.debug("Frame options disabled (for H2 console)");
                 })
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> {
-                    auth
-                            .requestMatchers(
-                                    "/payments/**"
-                            ).authenticated();
-                    log.debug("🔒 Secured endpoint: /payments/** (requires authentication)");
+                    // Secure payment endpoints
+                    auth.requestMatchers("/payments/**").authenticated();
+                    log.debug("Secured endpoint: /payments/** (requires authentication)");
 
-                    auth
-                            .requestMatchers(
-                                    "/v3/api-docs/**",
-                                    "/swagger-ui/**",
-                                    "/swagger-ui.html",
-                                    "/actuator/**"
-                            ).permitAll();
-                    log.debug("📘 Permitted Swagger and actuator endpoints");
-
-                    auth
-                            .anyRequest().permitAll();
-                    log.debug("🌐 All other endpoints permitted");
+                    // Any other endpoints permitted
+                    auth.anyRequest().permitAll();
+                    log.debug("All other endpoints permitted");
                 })
                 .sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                    log.debug("📦 Session management set to STATELESS");
+                    log.debug("Session management set to STATELESS");
                 })
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
 
-        log.info("✅ SecurityFilterChain configured successfully for Payment Service");
+        log.info("SecurityFilterChain configured successfully for Payment Service");
         return chain;
     }
-
-
 
     /**
      * Provides the authentication manager bean required by Spring Security.
@@ -99,7 +86,7 @@ public class SecurityConfig {
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        log.info("🔐 Initializing AuthenticationManager");
+        log.info("Initializing AuthenticationManager");
         return config.getAuthenticationManager();
     }
 
@@ -110,7 +97,7 @@ public class SecurityConfig {
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        log.info("🔑 Using BCryptPasswordEncoder");
+        log.info("Using BCryptPasswordEncoder");
         return new BCryptPasswordEncoder();
     }
 }

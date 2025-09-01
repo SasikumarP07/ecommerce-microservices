@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
  * This client allows the Auth Service to send email or other notifications
  * by making HTTP requests to the Notification Service using declarative REST client style.
  */
-@FeignClient(name = "NOTIFICATION-SERVICE")
+@FeignClient(name = "notification-service")
 public interface NotificationClient {
 
     /**

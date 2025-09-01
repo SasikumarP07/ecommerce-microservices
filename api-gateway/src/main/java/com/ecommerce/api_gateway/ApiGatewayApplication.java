@@ -11,7 +11,11 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * and registers itself with the Eureka Discovery Server.
  */
 @EnableDiscoveryClient
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+		"com.ecommerce.api_gateway",
+		"com.ecommerce.common_util.util" // Add this if needed
+})
+
 public class ApiGatewayApplication {
 
 	/**
@@ -20,7 +24,7 @@ public class ApiGatewayApplication {
 	 * @param args command-line arguments
 	 */
 	public static void main(String[] args) {
-		System.out.println("🚀 Gateway App Starting...");
+		System.out.println("Gateway App Starting...");
 		SpringApplication.run(ApiGatewayApplication.class, args);
 	}
 

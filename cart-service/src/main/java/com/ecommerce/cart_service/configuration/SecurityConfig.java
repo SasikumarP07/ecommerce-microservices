@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -42,40 +43,40 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("🔐 Configuring SecurityFilterChain for Cart Service...");
+        log.info("Configuring SecurityFilterChain for Cart Service...");
 
         http
                 .csrf(csrf -> {
                     csrf.disable();
-                    log.debug("❌ CSRF protection disabled");
+                    log.debug("CSRF protection disabled");
                 })
                 .sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                    log.debug("📦 Session management set to STATELESS");
+                    log.debug("Session management set to STATELESS");
                 })
                 .authorizeHttpRequests(auth -> {
-                    auth
-                            .requestMatchers(
-                                    "/actuator/**",
-                                    "/v3/api-docs/**",
-                                    "/swagger-ui/**",
-                                    "/swagger-ui.html"
-                            ).permitAll(); // ✅ Publicly accessible endpoints (including Swagger)
+                    // Public endpoints
+                    auth.requestMatchers("/actuator/**").permitAll();
+                    log.info("Actuator endpoints are public");
 
-                    auth
-                            .requestMatchers("/api/carts/**").hasRole("USER");
-                    log.info("🔒 Protected access required for /api/carts/**");
+                    // Protected endpoints
+                    auth.requestMatchers("/api/carts/**").hasRole("USER");
+                    log.info("Protected access required for /api/carts/**");
 
-                    auth
-                            .anyRequest().authenticated();
-                    log.debug("🔐 Any other request requires authentication");
+                    // Any other request requires authentication
+                    auth.anyRequest().authenticated();
+                    log.debug("Any other request requires authentication");
                 })
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        log.info("🛡️ JWT Filter added to security chain");
+        log.info("JWT Filter added to security chain");
 
         return http.build();
     }
+
+
 
 
     /**
@@ -88,7 +89,7 @@ public class SecurityConfig {
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        log.info("🔧 Creating AuthenticationManager bean...");
+        log.info("Creating AuthenticationManager bean...");
         return config.getAuthenticationManager();
     }
 }

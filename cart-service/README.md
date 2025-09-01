@@ -1,27 +1,29 @@
-# 🛡️ Auth Service - E-commerce Microservices Project
+# Cart Service - E-commerce Microservices Project
 
-The **Auth Service** is a secure authentication module within the E-commerce Microservices Application. It manages user sign-up, login, and JWT-based authentication, and interacts with the **User Service** and **Notification Service**.
-
----
-
-## 📦 Features
-
-✅ User registration with secure password hashing  
-✅ User login with JWT token generation  
-✅ Email existence verification  
-✅ Integration with **User Service** for profile creation  
-✅ Integration with **Notification Service** for sending welcome messages  
-✅ Robust exception handling for invalid credentials or duplicates  
-✅ Unit tested using **Mockito** and **JUnit 5**
+The **Cart Service** manages shopping cart operations for the E-commerce Microservices Application.  
+It allows users to add, update, and remove items from their cart, and integrates with the **Product Service** to validate product details.
 
 ---
 
-## 🧱 Technologies Used
+## Features
+
+- Add products to a user’s cart
+- Update product quantity in the cart
+- Remove items from the cart
+- Retrieve cart items for a user
+- Clear cart after order placement
+- Validates product availability and pricing via **Product Service**
+- Exception handling for invalid cart operations
+
+---
+
+## Technologies Used
 
 - Java 17
 - Spring Boot
-- Spring Security
-- JWT (JSON Web Token)
+- Spring Data JPA
+- Hibernate
+- MySQL (or PostgreSQL)
 - Spring Cloud OpenFeign
 - Eureka Client
 - Lombok
@@ -30,30 +32,30 @@ The **Auth Service** is a secure authentication module within the E-commerce Mic
 
 ---
 
-## 🔐 Authentication Flow
+## Cart Flow
 
-1. Client sends a sign-up or login request to `/auth/signup` or `/auth/login`.
-2. Passwords are securely hashed using `PasswordEncoder`.
-3. On successful login, a JWT token is generated via `JwtUtil`.
-4. The token is sent back to the client for authenticating future requests.
-5. During registration, a profile is created via the **User Service**.
-6. A welcome notification is triggered using the **Notification Service**.
+1. User sends a request to add/update/remove items in their cart.
+2. Cart Service validates product details using **Product Service**.
+3. Cart items are persisted in the database.
+4. When an order is placed, the cart is cleared.
 
 ---
 
-## 🔗 API Endpoints
+## API Endpoints
 
-Base URL: `/api/auth`
+Base URL: `/api/cart`
 
-| Method | Endpoint      | Description                      |
-|--------|---------------|----------------------------------|
-| POST   | `/signup`     | Registers a new user             |
-| POST   | `/login`      | Authenticates user & returns JWT |
-| GET    | `/check-email`| Verifies email existence         |
+| Method | Endpoint             | Description                      |
+|--------|----------------------|----------------------------------|
+| POST   | `/add`               | Add a product to the cart        |
+| PUT    | `/update/{itemId}`   | Update quantity of a cart item   |
+| DELETE | `/remove/{itemId}`   | Remove a product from the cart   |
+| GET    | `/user/{userId}`     | Get all cart items for a user    |
+| DELETE | `/clear/{userId}`    | Clear cart for a specific user   |
 
 ---
 
-## 🧪 Testing
+## Testing
 
 - Unit tested using **Mockito** and **JUnit 5**
-- Tests cover service logic and edge cases
+- Tests cover service logic, product validation, and edge cases  

@@ -1,7 +1,7 @@
 package com.ecommerce.inventory_service.exception;
 
 /**
- * ❗ DuplicateResourceException
+ * DuplicateResourceException
  * <p>
  * This exception is thrown when an attempt is made to create a resource
  * that already exists in the system (e.g., trying to create an inventory

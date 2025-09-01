@@ -24,12 +24,12 @@ public class CartItemMapper {
     public static CartItemResponseDTO toDto(CartItem item, ProductResponseDTO product) {
         // Validate input
         if (item == null || product == null) {
-            log.warn("🚨 Cannot map CartItem to DTO: item or product is null. item={}, product={}", item, product);
+            log.warn("Cannot map CartItem to DTO: item or product is null. item={}, product={}", item, product);
             return null;
         }
 
         // Log mapping start
-        log.debug("🛒 Mapping CartItem to CartItemResponseDTO: itemId={}, productName={}, quantity={}",
+        log.debug("Mapping CartItem to CartItemResponseDTO: itemId={}, productName={}, quantity={}",
                 item.getId(), product.getName(), item.getQuantity());
 
         // Create and populate DTO
@@ -44,7 +44,7 @@ public class CartItemMapper {
         dto.setTotalPrice(product.getPrice().multiply(new BigDecimal(item.getQuantity())));
 
         // Log mapping result
-        log.debug("✅ Mapped DTO: {}", dto);
+        log.debug("Mapped DTO: {}", dto);
 
         return dto;
     }

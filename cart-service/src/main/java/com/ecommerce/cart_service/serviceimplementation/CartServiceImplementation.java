@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 /**
- * 🛠️ Service implementation for handling cart-related operations.
+ * Service implementation for handling cart-related operations.
  * This class provides business logic for:
  * - Adding, updating, and removing items in a user's cart
  * - Fetching the current state of the cart
@@ -35,7 +35,7 @@ public class CartServiceImplementation implements CartService {
     private final ProductAsyncService productAsyncService;
 
     /**
-     * ➕ Adds a new item to the user's cart or updates the quantity if the item already exists.
+     * Adds a new item to the user's cart or updates the quantity if the item already exists.
      *
      * @param userId     the ID of the user
      * @param requestDTO the item request containing productId and quantity
@@ -83,7 +83,7 @@ public class CartServiceImplementation implements CartService {
     }
 
     /**
-     * 🔍 Fetches the cart details for a specific user using async product fetching.
+     * Fetches the cart details for a specific user using async product fetching.
      *
      * @param userId the ID of the user
      * @return cart response with detailed product info
@@ -104,7 +104,7 @@ public class CartServiceImplementation implements CartService {
     }
 
     /**
-     * ❌ Removes a specific product from the user's cart.
+     * Removes a specific product from the user's cart.
      *
      * @param userId    the ID of the user
      * @param productId the ID of the product to remove
@@ -138,7 +138,7 @@ public class CartServiceImplementation implements CartService {
     }
 
     /**
-     * 🧹 Clears all items from the user's cart.
+     * Clears all items from the user's cart.
      *
      * @param userId the ID of the user
      */
@@ -164,7 +164,7 @@ public class CartServiceImplementation implements CartService {
     }
 
     /**
-     * 🔄 Updates the quantity of a specific item in the user's cart.
+     * Updates the quantity of a specific item in the user's cart.
      *
      * @param userId   the ID of the user
      * @param productId the product whose quantity is being updated

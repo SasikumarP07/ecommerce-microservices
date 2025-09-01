@@ -50,4 +50,6 @@ public class Notification {
      * Timestamp indicating when the notification was sent.
      */
     private LocalDateTime sentAt;
+
+    private String status;
 }

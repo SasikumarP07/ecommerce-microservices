@@ -53,34 +53,28 @@ public class PaymentServiceImplementation implements PaymentService {
     @Override
     @Transactional
     public PaymentResponseDTO processPayment(PaymentRequestDTO requestDTO) {
-        log.info("💳 Processing payment for orderId: {}", requestDTO.getOrderId());
+        log.info("Processing payment for orderId: {}", requestDTO.getOrderId());
 
-        // Convert DTO to entity and prepare for saving
         Payment payment = PaymentMapper.toEntity(requestDTO);
-        payment.setStatus(PaymentStatus.SUCCESS); // Assuming successful payment
+        payment.setStatus(PaymentStatus.SUCCESS);
         payment.setTimestamp(LocalDateTime.now());
 
-        // Save payment to DB
         Payment savedPayment = paymentRepository.save(payment);
-        log.info("✅ Payment saved with ID: {}", savedPayment.getId());
+        log.info("Payment saved with ID: {}", savedPayment.getId());
 
-        // Fetch order details from Order Service
         OrderResponseDTO order = orderClient.getOrderById(requestDTO.getOrderId());
-        log.info("📦 Retrieved order details for orderId: {}", order.getId());
+        log.info("Retrieved order details for orderId: {}", order.getId());
 
-        // Fetch user details from User Service
         UserResponseDTO user = userClient.getUserById(order.getUserId());
-        log.info("👤 Retrieved user details for userId: {}", user.getId());
+        log.info("Retrieved user details for userId: {}", user.getId());
 
-        // Build and send notification
         NotificationRequestDTO notification = new NotificationRequestDTO();
         notification.setToEmail(user.getEmail());
         notification.setSubject("Payment Successful");
         notification.setMessage("Your payment for order ID " + order.getId() + " was successful.");
         notificationClient.sendNotification(notification);
-        log.info("📧 Payment notification sent to email: {}", user.getEmail());
+        log.info("Payment notification sent to email: {}", user.getEmail());
 
-        // Convert and return response DTO
         return PaymentMapper.toDTO(savedPayment);
     }
 
@@ -93,13 +87,13 @@ public class PaymentServiceImplementation implements PaymentService {
      */
     @Override
     public PaymentResponseDTO getPaymentByOrderId(Long orderId) {
-        log.info("🔍 Fetching payment details for orderId: {}", orderId);
+        log.info("Fetching payment details for orderId: {}", orderId);
         Payment payment = paymentRepository.findByOrderId(orderId);
         if (payment == null) {
-            log.warn("❌ Payment not found for orderId: {}", orderId);
+            log.warn("Payment not found for orderId: {}", orderId);
             throw new RuntimeException("Payment not found for orderId: " + orderId);
         }
-        log.info("✅ Payment found with ID: {}", payment.getId());
+        log.info("Payment found with ID: {}", payment.getId());
         return PaymentMapper.toDTO(payment);
     }
 }

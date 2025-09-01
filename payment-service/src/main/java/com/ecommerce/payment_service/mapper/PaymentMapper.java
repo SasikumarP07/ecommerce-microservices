@@ -26,7 +26,7 @@ public class PaymentMapper {
      * @return the corresponding {@link Payment} entity
      */
     public static Payment toEntity(PaymentRequestDTO dto) {
-        log.debug("🔄 Mapping PaymentRequestDTO to Payment entity for orderId: {}", dto.getOrderId());
+        log.debug("Mapping PaymentRequestDTO to Payment entity for orderId: {}", dto.getOrderId());
         return Payment.builder()
                 .orderId(dto.getOrderId())
                 .amount(dto.getAmount())
@@ -43,7 +43,7 @@ public class PaymentMapper {
      * @return the corresponding {@link PaymentResponseDTO}
      */
     public static PaymentResponseDTO toDTO(Payment payment) {
-        log.debug("🔄 Mapping Payment entity to PaymentResponseDTO for paymentId: {}", payment.getId());
+        log.debug("Mapping Payment entity to PaymentResponseDTO for paymentId: {}", payment.getId());
         return PaymentResponseDTO.builder()
                 .id(payment.getId())
                 .orderId(payment.getOrderId())

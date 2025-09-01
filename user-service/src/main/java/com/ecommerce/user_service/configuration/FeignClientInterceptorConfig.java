@@ -34,14 +34,15 @@ public class FeignClientInterceptorConfig {
             if (attrs != null) {
                 HttpServletRequest request = attrs.getRequest();
                 String token = request.getHeader("Authorization");
+                System.out.println(token);
                 if (token != null) {
-                    log.debug("🛡️ Forwarding Authorization token in Feign request");
+                    log.debug("Forwarding Authorization token in Feign request");
                     requestTemplate.header("Authorization", token);
                 } else {
-                    log.warn("⚠️ No Authorization token found in incoming request");
+                    log.warn("No Authorization token found in incoming request");
                 }
             } else {
-                log.warn("⚠️ No ServletRequestAttributes available. Feign request might be outside HTTP context.");
+                log.warn("No ServletRequestAttributes available. Feign request might be outside HTTP context.");
             }
         };
     }

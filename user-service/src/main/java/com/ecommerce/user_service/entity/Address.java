@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * Represents an address associated with a user in the e-commerce system.
@@ -58,6 +59,7 @@ public class Address {
      * Many addresses can belong to a single user.
      */
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
+    @ToString.Exclude
     private User user;
 }

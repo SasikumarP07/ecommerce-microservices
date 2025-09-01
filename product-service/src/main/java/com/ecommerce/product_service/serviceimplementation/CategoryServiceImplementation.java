@@ -41,12 +41,12 @@ public class CategoryServiceImplementation implements CategoryService {
         log.info("📦 Creating new category: {}", requestDTO.getName());
 
         if (categoryRepository.existsByName(requestDTO.getName())) {
-            log.warn("⚠️ Category already exists with name: {}", requestDTO.getName());
+            log.warn("Category already exists with name: {}", requestDTO.getName());
             throw new DuplicateResourceException("Category with name already exists");
         }
 
         Category saved = categoryRepository.save(CategoryMapper.toEntity(requestDTO));
-        log.info("✅ Category created with ID: {}", saved.getId());
+        log.info("Category created with ID: {}", saved.getId());
         return CategoryMapper.toDto(saved);
     }
 
@@ -57,7 +57,7 @@ public class CategoryServiceImplementation implements CategoryService {
      */
     @Override
     public List<CategoryResponseDTO> getAllCategories() {
-        log.info("📥 Fetching all categories");
+        log.info("Fetching all categories");
         List<Category> categories = categoryRepository.findAll();
         log.debug("🔎 Found {} categories", categories.size());
 
@@ -71,7 +71,7 @@ public class CategoryServiceImplementation implements CategoryService {
                 .map(CompletableFuture::join)
                 .toList();
 
-        log.info("✅ All categories mapped to DTOs successfully");
+        log.info("All categories mapped to DTOs successfully");
         return result;
     }
 
@@ -84,15 +84,15 @@ public class CategoryServiceImplementation implements CategoryService {
      */
     @Override
     public CategoryResponseDTO getCategoryById(Long id) {
-        log.info("🔍 Fetching category by ID: {}", id);
+        log.info("Fetching category by ID: {}", id);
 
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.error("❌ Category not found with ID: {}", id);
+                    log.error("Category not found with ID: {}", id);
                     return new ResourceNotFoundException("Category not found with ID: " + id);
                 });
 
-        log.info("✅ Category found: {}", category.getName());
+        log.info("Category found: {}", category.getName());
         return CategoryMapper.toDto(category);
     }
 
@@ -106,11 +106,11 @@ public class CategoryServiceImplementation implements CategoryService {
      */
     @Override
     public CategoryResponseDTO updateCategory(Long id, CategoryRequestDTO requestDTO) {
-        log.info("✏️ Updating category with ID: {}", id);
+        log.info("Updating category with ID: {}", id);
 
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.error("❌ Cannot update. Category not found with ID: {}", id);
+                    log.error("Cannot update. Category not found with ID: {}", id);
                     return new ResourceNotFoundException("Category not found with ID: " + id);
                 });
 
@@ -118,7 +118,7 @@ public class CategoryServiceImplementation implements CategoryService {
         category.setDescription(requestDTO.getDescription());
 
         Category updated = categoryRepository.save(category);
-        log.info("✅ Category updated: {}", updated.getName());
+        log.info("Category updated: {}", updated.getName());
         return CategoryMapper.toDto(updated);
     }
 
@@ -130,16 +130,16 @@ public class CategoryServiceImplementation implements CategoryService {
      */
     @Override
     public void deleteCategory(Long id) {
-        log.info("🗑️ Deleting category with ID: {}", id);
+        log.info("Deleting category with ID: {}", id);
 
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.error("❌ Cannot delete. Category not found with ID: {}", id);
+                    log.error("Cannot delete. Category not found with ID: {}", id);
                     return new ResourceNotFoundException("Category not found with ID: " + id);
                 });
 
         categoryRepository.delete(category);
-        log.info("✅ Category deleted with ID: {}", id);
+        log.info("Category deleted with ID: {}", id);
     }
 
     /**
@@ -151,15 +151,15 @@ public class CategoryServiceImplementation implements CategoryService {
      */
     @Override
     public CategoryResponseDTO getCategoryByName(String name) {
-        log.info("🔍 Fetching category by name: {}", name);
+        log.info("Fetching category by name: {}", name);
 
         Category category = categoryRepository.findByName(name)
                 .orElseThrow(() -> {
-                    log.error("❌ Category not found with name: {}", name);
+                    log.error("Category not found with name: {}", name);
                     return new ResourceNotFoundException("Category not found with name: " + name);
                 });
 
-        log.info("✅ Category found: {}", category.getName());
+        log.info("Category found: {}", category.getName());
         return CategoryMapper.toDto(category);
     }
 }

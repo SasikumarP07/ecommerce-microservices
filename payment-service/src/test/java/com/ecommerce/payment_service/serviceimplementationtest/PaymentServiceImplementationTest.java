@@ -69,10 +69,8 @@ class PaymentServiceImplementationTest {
 
         when(paymentRepository.save(any(Payment.class))).thenReturn(mockEntity);
 
-        // Act
         PaymentResponseDTO response = paymentService.processPayment(requestDTO);
 
-        // Assert
         assertNotNull(response);
         assertEquals(requestDTO.getOrderId(), response.getOrderId());
         assertEquals(requestDTO.getAmount(), response.getAmount());
@@ -89,7 +87,6 @@ class PaymentServiceImplementationTest {
      */
     @Test
     void testGetPaymentByOrderId_success() {
-        // Arrange
         Long orderId = 10L;
 
         Payment payment = Payment.builder()
@@ -102,10 +99,8 @@ class PaymentServiceImplementationTest {
 
         when(paymentRepository.findByOrderId(orderId)).thenReturn(payment);
 
-        // Act
         PaymentResponseDTO response = paymentService.getPaymentByOrderId(orderId);
 
-        // Assert
         assertNotNull(response);
         assertEquals(orderId, response.getOrderId());
         assertEquals(PaymentStatus.SUCCESS, response.getStatus());
@@ -121,11 +116,9 @@ class PaymentServiceImplementationTest {
      */
     @Test
     void testGetPaymentByOrderId_notFound() {
-        // Arrange
         Long orderId = 99L;
         when(paymentRepository.findByOrderId(orderId)).thenReturn(null);
 
-        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () ->
                 paymentService.getPaymentByOrderId(orderId));
 

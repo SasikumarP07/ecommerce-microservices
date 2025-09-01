@@ -15,6 +15,8 @@ import com.ecommerce.user_service.repository.UserRepository;
 import com.ecommerce.user_service.service.AddressService;
 import com.ecommerce.user_service.service.UserService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,23 +51,36 @@ public class UserServiceImplementation implements UserService {
     @Override
     @Transactional
     public UserResponseDTO save(User user) {
-        log.info("📥 Saving user: {}", user);
+        log.info("Saving user: {}", user);
         try {
             User savedUser = repository.save(user);
-            log.debug("✅ User saved successfully with ID: {}", savedUser.getId());
+            System.out.println(savedUser);
+            log.debug("User saved successfully with ID: {}", savedUser.getId());
 
             try {
-                notificationClient.sendWelcomeEmail(savedUser.getEmail());
-                log.info("📧 Welcome email sent to: {}", savedUser.getEmail());
+                System.out.println("Saved user Email ID: "+savedUser.getEmail());
+                sendWelcomeEmailSafe(savedUser.getEmail());
+                log.info("Welcome email sent to: {}", savedUser.getEmail());
             } catch (Exception e) {
-                log.error("❌ Failed to send welcome email to: {}", savedUser.getEmail(), e);
+                log.error("Failed to send welcome email to: {}", savedUser.getEmail(), e);
             }
 
             return UserMapper.toDTO(savedUser);
         } catch (Exception e) {
-            log.error("❌ Exception occurred while saving user", e);
+            log.error("Exception occurred while saving user", e);
             throw new RuntimeException("Failed to save user", e);
         }
+    }
+
+
+    @CircuitBreaker(name = "notificationServiceCB", fallbackMethod = "sendWelcomeEmailFallback")
+    @Retry(name = "notificationServiceRetry")
+    public void sendWelcomeEmailSafe(String email) {
+        notificationClient.sendWelcomeEmail(email);
+    }
+
+    public void sendWelcomeEmailFallback(String email, Throwable ex) {
+        log.error("NotificationService unavailable. Fallback triggered for email: {}. Reason: {}", email, ex.getMessage());
     }
 
     /**
@@ -78,10 +93,10 @@ public class UserServiceImplementation implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserResponseDTO getUserById(Long id) {
-        log.info("🔍 Fetching user with ID: {}", id);
+        log.info("Fetching user with ID: {}", id);
         User user = repository.findById(id)
                 .orElseThrow(() -> {
-                    log.warn("⚠️ User not found with ID: {}", id);
+                    log.warn("User not found with ID: {}", id);
                     return new ResourceNotFoundException("User not found with ID: " + id);
                 });
         return UserMapper.toDTO(user);
@@ -98,15 +113,15 @@ public class UserServiceImplementation implements UserService {
     @Override
     @Transactional
     public UserResponseDTO updateUser(Long id, UserRequestDTO dto) {
-        log.info("✏️ Updating user with ID: {}", id);
+        log.info("Updating user with ID: {}", id);
         User user = repository.findById(id)
                 .orElseThrow(() -> {
-                    log.warn("⚠️ User not found with ID: {}", id);
+                    log.warn("User not found with ID: {}", id);
                     return new ResourceNotFoundException("User not found with ID: " + id);
                 });
 
         User updatedUser = repository.save(UserMapper.toEntity(dto, user));
-        log.debug("✅ User updated: {}", updatedUser);
+        log.debug("User updated: {}", updatedUser);
         return UserMapper.toDTO(updatedUser);
     }
 
@@ -120,15 +135,15 @@ public class UserServiceImplementation implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<AddressResponseDTO> getAddresses(Long id) {
-        log.info("📦 Fetching addresses for user ID: {}", id);
+        log.info("Fetching addresses for user ID: {}", id);
         User user = repository.findById(id)
                 .orElseThrow(() -> {
-                    log.warn("⚠️ User not found with ID: {}", id);
+                    log.warn("User not found with ID: {}", id);
                     return new ResourceNotFoundException("User not found with ID: " + id);
                 });
 
         List<AddressResponseDTO> addresses = AddressMapper.toDTO(user);
-        log.debug("✅ Found {} addresses for user ID: {}", addresses.size(), id);
+        log.debug("Found {} addresses for user ID: {}", addresses.size(), id);
         return addresses;
     }
 
@@ -143,16 +158,16 @@ public class UserServiceImplementation implements UserService {
     @Override
     @Transactional
     public AddressResponseDTO addAddress(Long id, AddressRequestDTO dto) {
-        log.info("➕ Adding address for user ID: {}", id);
+        log.info("Adding address for user ID: {}", id);
         repository.findById(id)
                 .orElseThrow(() -> {
-                    log.warn("⚠️ User not found with ID: {}", id);
+                    log.warn("User not found with ID: {}", id);
                     return new ResourceNotFoundException("User not found with ID: " + id);
                 });
 
         Address address = AddressMapper.toEntity(dto);
         Address savedAddress = addressService.save(address);
-        log.debug("✅ Address added: {}", savedAddress);
+        log.debug("Address added: {}", savedAddress);
         return AddressMapper.toDTO(savedAddress);
     }
 
@@ -169,27 +184,27 @@ public class UserServiceImplementation implements UserService {
     @Override
     @Transactional
     public AddressResponseDTO updateAddress(Long id, Long addressId, AddressRequestDTO dto) {
-        log.info("✏️ Updating address ID: {} for user ID: {}", addressId, id);
+        log.info("Updating address ID: {} for user ID: {}", addressId, id);
 
         repository.findById(id)
                 .orElseThrow(() -> {
-                    log.warn("⚠️ User not found with ID: {}", id);
+                    log.warn("User not found with ID: {}", id);
                     return new ResourceNotFoundException("User not found with ID: " + id);
                 });
 
         Address address = addressService.getAddressId(addressId)
                 .orElseThrow(() -> {
-                    log.warn("⚠️ Address not found with ID: {}", addressId);
+                    log.warn("Address not found with ID: {}", addressId);
                     return new ResourceNotFoundException("Address not found with ID: " + addressId);
                 });
 
         if (!address.getUser().getId().equals(id)) {
-            log.warn("🚫 Unauthorized access: Address {} does not belong to user {}", addressId, id);
+            log.warn("Unauthorized access: Address {} does not belong to user {}", addressId, id);
             throw new UnauthorizedAccessException("Address does not belong to the specified user");
         }
 
         Address updatedAddress = addressService.save(AddressMapper.toEntity(address, dto));
-        log.debug("✅ Address updated: {}", updatedAddress);
+        log.debug("Address updated: {}", updatedAddress);
         return AddressMapper.toDTO(updatedAddress);
     }
 
@@ -205,27 +220,27 @@ public class UserServiceImplementation implements UserService {
     @Override
     @Transactional
     public AddressResponseDTO deleteAddress(Long id, Long addressId) {
-        log.info("🗑️ Deleting address ID: {} for user ID: {}", addressId, id);
+        log.info("Deleting address ID: {} for user ID: {}", addressId, id);
 
         repository.findById(id)
                 .orElseThrow(() -> {
-                    log.warn("⚠️ User not found with ID: {}", id);
+                    log.warn("User not found with ID: {}", id);
                     return new ResourceNotFoundException("User not found with ID: " + id);
                 });
 
         Address address = addressService.getAddressId(addressId)
                 .orElseThrow(() -> {
-                    log.warn("⚠️ Address not found with ID: {}", addressId);
+                    log.warn("Address not found with ID: {}", addressId);
                     return new ResourceNotFoundException("Address not found with ID: " + addressId);
                 });
 
         if (!address.getUser().getId().equals(id)) {
-            log.warn("🚫 Unauthorized deletion attempt: Address {} does not belong to user {}", addressId, id);
+            log.warn("Unauthorized deletion attempt: Address {} does not belong to user {}", addressId, id);
             throw new UnauthorizedAccessException("Address does not belong to the specified user");
         }
 
         addressService.delete(address.getId());
-        log.debug("✅ Address deleted: {}", addressId);
+        log.debug("Address deleted: {}", addressId);
         return AddressMapper.toDTO(address);
     }
 }

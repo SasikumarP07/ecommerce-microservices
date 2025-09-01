@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 
 /**
- * 🚨 GlobalExceptionHandler
+ * GlobalExceptionHandler
  * <p>
  * Centralized exception handling for all controllers in the application.
  * Catches and handles specific and generic exceptions thrown by service or controller layers,

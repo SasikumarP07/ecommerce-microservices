@@ -16,8 +16,8 @@ import java.util.Optional;
  * retrieving by ID, and deleting addresses.
  * </p>
  *
- * ✅ Uses constructor injection via Lombok's {@link RequiredArgsConstructor}.
- * ✅ Logs all major operations using {@link Slf4j}.
+ *  Uses constructor injection via Lombok's {@link RequiredArgsConstructor}.
+ *  Logs all major operations using {@link Slf4j}.
  */
 @Service
 @RequiredArgsConstructor
@@ -35,9 +35,9 @@ public class AddressServiceImplementation implements AddressService {
      */
     @Override
     public Address save(Address address) {
-        log.info("💾 Saving address: {}", address);
+        log.info("Saving address: {}", address);
         Address savedAddress = addressRepository.save(address);
-        log.info("✅ Address saved with ID: {}", savedAddress.getId());
+        log.info("Address saved with ID: {}", savedAddress.getId());
         return savedAddress;
     }
 
@@ -49,12 +49,12 @@ public class AddressServiceImplementation implements AddressService {
      */
     @Override
     public Optional<Address> getAddressId(Long addressId) {
-        log.info("🔍 Fetching address with ID: {}", addressId);
+        log.info("Fetching address with ID: {}", addressId);
         Optional<Address> address = addressRepository.findById(addressId);
         if (address.isPresent()) {
-            log.info("✅ Address found: {}", address.get());
+            log.info("Address found: {}", address.get());
         } else {
-            log.warn("⚠️ Address not found for ID: {}", addressId);
+            log.warn("Address not found for ID: {}", addressId);
         }
         return address;
     }
@@ -66,8 +66,8 @@ public class AddressServiceImplementation implements AddressService {
      */
     @Override
     public void delete(Long id) {
-        log.info("🗑️ Deleting address with ID: {}", id);
+        log.info("Deleting address with ID: {}", id);
         addressRepository.deleteById(id);
-        log.info("✅ Address deleted with ID: {}", id);
+        log.info("Address deleted with ID: {}", id);
     }
 }

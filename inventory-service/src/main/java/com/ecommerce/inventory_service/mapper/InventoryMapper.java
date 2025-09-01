@@ -22,7 +22,7 @@ public class InventoryMapper {
      * @return the corresponding InventoryResponseDTO
      */
     public static InventoryResponseDTO toDTO(Inventory inventory) {
-        log.info("🔄 Mapping Inventory entity to InventoryResponseDTO for productId: {}", inventory.getProductId());
+        log.info("Mapping Inventory entity to InventoryResponseDTO for productId: {}", inventory.getProductId());
         return InventoryResponseDTO.builder()
                 .productId(inventory.getProductId())
                 .stockQuantity(inventory.getQuantity())

@@ -16,9 +16,12 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * - @EnableAsync: Enables asynchronous processing (used for async product fetching).
  */
 @EnableDiscoveryClient
-@SpringBootApplication
 @EnableFeignClients
 @EnableAsync
+@SpringBootApplication(scanBasePackages = {
+		"com.ecommerce.auth_service",
+		"com.ecommerce.common_util.util"
+})
 public class CartServiceApplication {
 
 	/**

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * ❌ ErrorResponse
+ * ErrorResponse
  * <p>
  * A simplified error response model returned to the client when an exception occurs.
  * Typically used in REST APIs to indicate HTTP status and error message.
@@ -20,7 +20,7 @@ import lombok.Data;
  * </pre>
  * </p>
  *
- * ✅ Annotated with Lombok {@code @Data} and {@code @AllArgsConstructor} for boilerplate reduction.
+ * Annotated with Lombok {@code @Data} and {@code @AllArgsConstructor} for boilerplate reduction.
  */
 @Data
 @AllArgsConstructor

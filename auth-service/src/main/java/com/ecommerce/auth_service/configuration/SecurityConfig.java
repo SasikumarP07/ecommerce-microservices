@@ -24,7 +24,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 /**
- * 🔐 SecurityConfig configures Spring Security settings for the Auth Service.
+ * SecurityConfig configures Spring Security settings for the Auth Service.
  * It handles JWT-based stateless authentication, CORS setup, endpoint access rules, and essential beans.
  */
 @Configuration
@@ -48,55 +48,50 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("🔒 Configuring SecurityFilterChain...");
+        log.info("Configuring SecurityFilterChain...");
 
         http
                 .csrf(csrf -> {
                     csrf.disable();
-                    log.debug("✅ CSRF protection disabled");
+                    log.debug("CSRF protection disabled");
                 })
                 .cors(cors -> {
                     cors.configurationSource(corsConfigurationSource());
-                    log.debug("🌐 CORS configuration applied");
+                    log.debug("CORS configuration applied");
                 })
                 .sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                    log.debug("📦 Session management set to STATELESS");
+                    log.debug("Session management set to STATELESS");
                 })
                 .authorizeHttpRequests(auth -> {
                     auth
                             .requestMatchers(
                                     "/auth/login",
-                                    "/auth/signup",
-                                    "/swagger-ui/**",
-                                    "/swagger-ui.html",
-                                    "/v3/api-docs/**",
-                                    "/v3/api-docs",
-                                    "/webjars/**",
-                                    "/swagger-resources/**"
-                            ).permitAll(); // Allow Swagger and auth endpoints
+                                    "/auth/signup"
+                            ).permitAll(); // Allow only auth endpoints
 
                     auth.anyRequest().authenticated(); // All other endpoints require authentication
 
-                    log.debug("🔐 Public endpoints set for Swagger and /auth/login, /auth/signup. Others secured.");
+                    log.debug("Public endpoints set for /auth/login, /auth/signup. Others secured.");
                 });
 
         // Add JWT filter before the default UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        log.debug("🛡️ JWT filter added before UsernamePasswordAuthenticationFilter");
+        log.debug("JWT filter added before UsernamePasswordAuthenticationFilter");
 
         return http.build();
     }
 
 
+
     /**
      * Configures global CORS policy.
      * Allows all origins, headers, and common HTTP methods.
-     * ⚠️ In production, restrict origins to trusted domains only.
+     * In production, restrict origins to trusted domains only.
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        log.info("🌐 Creating CORS configuration source...");
+        log.info("Creating CORS configuration source...");
 
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("*")); // Replace "*" with specific domains in production
@@ -104,12 +99,12 @@ public class SecurityConfig {
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true); // Allows cookies and headers to be sent
 
-        log.debug("✅ CORS allowed origins: {}, methods: {}, headers: {}",
+        log.debug("CORS allowed origins: {}, methods: {}, headers: {}",
                 config.getAllowedOrigins(), config.getAllowedMethods(), config.getAllowedHeaders());
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-        log.info("🌍 CORS configuration registered for all endpoints");
+        log.info("CORS configuration registered for all endpoints");
 
         return source;
     }
@@ -120,7 +115,7 @@ public class SecurityConfig {
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        log.info("🔐 Creating AuthenticationManager bean...");
+        log.info("Creating AuthenticationManager bean...");
         return config.getAuthenticationManager();
     }
 
@@ -130,7 +125,7 @@ public class SecurityConfig {
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        log.info("🔑 Creating BCryptPasswordEncoder bean...");
+        log.info("Creating BCryptPasswordEncoder bean...");
         return new BCryptPasswordEncoder();
     }
 
@@ -140,7 +135,7 @@ public class SecurityConfig {
     @Bean
     @LoadBalanced
     public RestTemplate restTemplate() {
-        log.info("🔁 Creating LoadBalanced RestTemplate bean...");
+        log.info("Creating LoadBalanced RestTemplate bean...");
         return new RestTemplate();
     }
 }

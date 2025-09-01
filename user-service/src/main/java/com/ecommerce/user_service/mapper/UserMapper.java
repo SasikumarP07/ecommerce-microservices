@@ -3,8 +3,11 @@ package com.ecommerce.user_service.mapper;
 import com.ecommerce.common_dto.dto.user.UserProfileRequest;
 import com.ecommerce.common_dto.dto.user.UserRequestDTO;
 import com.ecommerce.common_dto.dto.user.UserResponseDTO;
+import com.ecommerce.user_service.entity.Address;
 import com.ecommerce.user_service.entity.User;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 /**
  * Mapper class for converting between User entity and DTOs.
@@ -20,7 +23,7 @@ public class UserMapper {
      * @return the updated User entity.
      */
     public static User toEntity(UserRequestDTO dto, User user) {
-        log.info("🔄 Mapping UserRequestDTO to existing User entity: {}", dto);
+        log.info("Mapping UserRequestDTO to existing User entity: {}", dto);
         user.setName(dto.getName());
         user.setPhone(dto.getPhone());
         user.setEmail(dto.getEmail());
@@ -35,15 +38,37 @@ public class UserMapper {
      * @return a new User entity with the provided data.
      */
     public static User toEntity(UserProfileRequest userProfileRequest) {
-        log.info("🛠️ Mapping UserProfileRequest to new User entity: {}", userProfileRequest);
+        log.info("Mapping UserProfileRequest to new User entity: {}", userProfileRequest);
+
         User user = new User();
         user.setId(userProfileRequest.getId());
         user.setName(userProfileRequest.getName());
         user.setPhone(userProfileRequest.getPhone());
         user.setEmail(userProfileRequest.getEmail());
+        user.setRole(userProfileRequest.getRole());
         user.setPassword(userProfileRequest.getPassword());
+
+        if (userProfileRequest.getAddresses() != null) {
+            List<Address> addresses = userProfileRequest.getAddresses().stream()
+                    .map(addrReq -> {
+                        Address address = new Address();
+                        address.setDoorNum(addrReq.getDoorNum());
+                        address.setStreet(addrReq.getStreet());
+                        address.setCity(addrReq.getCity());
+                        address.setState(addrReq.getState());
+                        address.setPinCode(addrReq.getPinCode());
+                        address.setCountry(addrReq.getCountry());
+                        address.setUser(user); // link to parent
+                        return address;
+                    })
+                    .toList();
+
+            user.setAddresses(addresses);
+        }
+
         return user;
     }
+
 
     /**
      * Converts a {@link User} entity to a {@link UserResponseDTO}.
@@ -52,7 +77,7 @@ public class UserMapper {
      * @return a UserResponseDTO with mapped user data.
      */
     public static UserResponseDTO toDTO(User user) {
-        log.info("📤 Mapping User entity to UserResponseDTO for userId: {}", user.getId());
+        log.info("Mapping User entity to UserResponseDTO for userId: {}", user.getId());
         UserResponseDTO dto = new UserResponseDTO();
         dto.setId(user.getId());
         dto.setName(user.getName());

@@ -24,7 +24,7 @@ public class NotificationMapper {
      * @return a Notification entity with mapped data
      */
     public static Notification toEntity(NotificationRequestDTO dto) {
-        log.debug("🔄 Converting NotificationRequestDTO to Notification entity: {}", dto);
+        log.debug("Converting NotificationRequestDTO to Notification entity: {}", dto);
         Notification notification = Notification.builder()
                 .toEmail(dto.getToEmail())
                 .subject(dto.getSubject())
@@ -32,7 +32,7 @@ public class NotificationMapper {
                 .sent(false) // initially not sent
                 .sentAt(LocalDateTime.now())
                 .build();
-        log.debug("✅ Created Notification entity: {}", notification);
+        log.debug("Created Notification entity: {}", notification);
         return notification;
     }
 
@@ -45,7 +45,7 @@ public class NotificationMapper {
      * @return a response DTO containing mapped data
      */
     public static NotificationResponseDTO toDto(Notification notification) {
-        log.debug("🔄 Converting Notification entity to NotificationResponseDTO: {}", notification);
+        log.debug("Converting Notification entity to NotificationResponseDTO: {}", notification);
         NotificationResponseDTO responseDTO = NotificationResponseDTO.builder()
                 .id(notification.getId())
                 .toEmail(notification.getToEmail())
@@ -54,7 +54,7 @@ public class NotificationMapper {
                 .sent(notification.isSent())
                 .sentAt(notification.getSentAt())
                 .build();
-        log.debug("✅ Created NotificationResponseDTO: {}", responseDTO);
+        log.debug("Created NotificationResponseDTO: {}", responseDTO);
         return responseDTO;
     }
 }

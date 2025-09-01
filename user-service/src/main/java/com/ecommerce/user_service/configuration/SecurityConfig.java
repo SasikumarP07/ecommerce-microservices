@@ -43,7 +43,7 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("🔐 Initializing SecurityFilterChain configuration");
+        log.info("Initializing SecurityFilterChain configuration");
 
         return http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
@@ -52,15 +52,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/public/**",
-                                "/h2-console/**",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**"
-                        ).permitAll() // Permit public, H2 console, and Swagger endpoints
+                                "/h2-console/**"
+                        ).permitAll() // Permit public and H2 console endpoints
                         .anyRequest().authenticated() // All other endpoints require authentication
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add custom JWT filter
                 .build();
     }
+
 
 
     /**
@@ -70,7 +69,7 @@ public class SecurityConfig {
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        log.info("🔑 Creating PasswordEncoder bean using BCrypt");
+        log.info("Creating PasswordEncoder bean using BCrypt");
         return new BCryptPasswordEncoder();
     }
 
@@ -83,7 +82,7 @@ public class SecurityConfig {
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        log.info("🧠 Creating AuthenticationManager bean");
+        log.info("Creating AuthenticationManager bean");
         return config.getAuthenticationManager();
     }
 
@@ -94,9 +93,9 @@ public class SecurityConfig {
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        log.info("🌐 Configuring CORS");
+        log.info("Configuring CORS");
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*")); // ⚠️ In production, replace with specific allowed origins
+        config.setAllowedOrigins(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

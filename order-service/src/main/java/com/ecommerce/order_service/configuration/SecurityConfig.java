@@ -30,55 +30,47 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("🔐 Configuring SecurityFilterChain for Order Service");
+        log.info("Configuring SecurityFilterChain for Order Service");
 
         return http
                 .csrf(csrf -> {
                     csrf.disable();
-                    log.debug("✅ CSRF protection disabled (stateless API)");
+                    log.debug("CSRF protection disabled (stateless API)");
                 })
                 .headers(headers -> {
                     headers.frameOptions(frame -> frame.disable());
-                    log.debug("✅ Frame options disabled (to allow H2 console)");
+                    log.debug("Frame options disabled (to allow H2 console)");
                 })
-                .cors(Customizer.withDefaults()) // Use default CORS configuration (can be customized further)
+                .cors(Customizer.withDefaults()) // Default CORS config
                 .authorizeHttpRequests(auth -> {
-                    auth
-                            .requestMatchers(
-                                    "/public/**",
-                                    "/h2-console/**",
-                                    "/swagger-ui/**",
-                                    "/swagger-ui.html",
-                                    "/v3/api-docs/**",
-                                    "/v3/api-docs",
-                                    "/v3/api-docs.yaml"
-                            ).permitAll();
-                    log.debug("✅ Public access granted for Swagger and H2 endpoints");
+                    auth.requestMatchers(
+                            "/public/**",
+                            "/h2-console/**"
+                    ).permitAll();
+                    log.debug("Public access granted for H2 console and /public/** endpoints");
 
                     auth.anyRequest().authenticated();
-                    log.debug("🔐 Authentication required for all other endpoints");
+                    log.debug("Authentication required for all other endpoints");
                 })
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
-
-
     @Bean
     public PasswordEncoder passwordEncoder() {
-        log.info("🔐 Creating BCryptPasswordEncoder bean");
+        log.info("Creating BCryptPasswordEncoder bean");
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        log.info("🔐 Creating AuthenticationManager bean");
+        log.info("Creating AuthenticationManager bean");
         return config.getAuthenticationManager();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        log.info("🌐 Configuring CORS settings...");
+        log.info("Configuring CORS settings...");
 
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("*")); // In production, use specific domains
@@ -86,13 +78,13 @@ public class SecurityConfig {
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
-        log.debug("✅ CORS allowed origins: *");
-        log.debug("✅ CORS allowed methods: GET, POST, PUT, DELETE, OPTIONS");
+        log.debug("CORS allowed origins: *");
+        log.debug("CORS allowed methods: GET, POST, PUT, DELETE, OPTIONS");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
-        log.info("✅ CORS configuration completed");
+        log.info("CORS configuration completed");
         return source;
     }
 }

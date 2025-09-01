@@ -15,7 +15,7 @@ import com.ecommerce.common_dto.dto.cart.CartResponseDTO;
 public interface CartService {
 
     /**
-     * 🔍 Get the cart for a specific user by user ID.
+     * Get the cart for a specific user by user ID.
      *
      * @param userId the ID of the user
      * @return the current cart details as {@link CartResponseDTO}
@@ -23,7 +23,7 @@ public interface CartService {
     CartResponseDTO getCartByUserId(Long userId);
 
     /**
-     * ➕ Add a new item to the user's cart.
+     * Add a new item to the user's cart.
      *
      * @param userId         the ID of the user
      * @param itemRequestDTO details of the item to be added
@@ -32,7 +32,7 @@ public interface CartService {
     CartResponseDTO addItemToCart(Long userId, CartItemRequestDTO itemRequestDTO);
 
     /**
-     * 🔄 Update the quantity of an existing cart item.
+     * Update the quantity of an existing cart item.
      *
      * @param userId   the ID of the user
      * @param itemId   the ID of the cart item
@@ -42,7 +42,7 @@ public interface CartService {
     CartResponseDTO updateItemQuantity(Long userId, Long itemId, int quantity);
 
     /**
-     * ❌ Remove a specific item from the user's cart.
+     * Remove a specific item from the user's cart.
      *
      * @param userId the ID of the user
      * @param itemId the ID of the cart item to be removed
@@ -51,7 +51,7 @@ public interface CartService {
     CartResponseDTO removeItemFromCart(Long userId, Long itemId);
 
     /**
-     * 🧹 Clear all items from the user's cart.
+     * Clear all items from the user's cart.
      *
      * @param userId the ID of the user
      */
